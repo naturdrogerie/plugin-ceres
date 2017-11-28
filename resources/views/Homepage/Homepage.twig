@@ -5,6 +5,9 @@
 {% set companyName  = config("Ceres.header.company_name") %}
 
 {% block PartialHead %}
+    <meta name="description" content="{{ config("Ceres.meta."~metaLang~".description_home") }}">
+    <meta name="robots" content="{{ config("Ceres.meta.robots_home") }}">
+
     <meta property="og:title" content="{{ companyName }}"/>
     <meta property="og:type" content="article"/>
     <meta property="og:url" content="{{ services.webstoreConfig.getWebstoreConfig().domainSsl }}"/>
@@ -17,6 +20,8 @@
     <script type="application/ld+json">
         {"@context": "http://schema.org","@type": "WebSite","url": "{{ services.webstoreConfig.getWebstoreConfig().domainSsl }}","potentialAction":{"@type": "SearchAction","target": "{{ services.webstoreConfig.getWebstoreConfig().domainSsl }}/search?query={search_term}","query-input": "required name=search_term"}}
     </script>
+
+    <title>{{ config("Ceres.header.company_name") }}</title>
 {% endblock %}
 
 {% block PageBody %}
@@ -28,7 +33,7 @@
     {% else %}
         {% block ThemeHomepage %}
 
-            {{ includeCached('Ceres::Homepage.DefaultHomepage.twig') }}
+            {% include 'Ceres::Homepage.DefaultHomepage.twig' %}
 
         {% endblock %}
 

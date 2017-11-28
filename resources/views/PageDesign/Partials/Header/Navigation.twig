@@ -3,7 +3,6 @@
 {% set showHeaderNavBar = config("Ceres.header.show_navbars") %}
 {% set companyName  = config("Ceres.header.company_name") %}
 
-
 <nav class="navbar">
       <div class="container-max">
         <div class="row">
@@ -23,7 +22,6 @@
 
             <div id="mainNavbarCollapsable">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a>{{ trans("Ceres::Template.generalBigAll") }}</a></li>
                     <li class="btnClose"></li>
                 </ul>
                 {% if showHeaderNavBar == "top" or showHeaderNavBar == "both" or not services.template.isCategory() %}

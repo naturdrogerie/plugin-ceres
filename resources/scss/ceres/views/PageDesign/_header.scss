@@ -40,6 +40,10 @@
 			.fa{
 				font-size: 1.2rem;
 			}
+
+			.basket-seperator{
+				margin: 0 2px;
+			}
 		}
 
 		.control-user{
@@ -71,10 +75,51 @@
 			}
 		}
 
+		.control-wish-list {
+			a {
+				.badge-right{
+					margin-right: .5rem; 
+				}
+				i{
+					&.fa-heart-o{
+						font-size: .9rem;
+					}
+
+					&.fa-heart{
+						margin-right: .2rem;
+						font-size: .8rem;
+						color: rgba(255, 0, 0, 0.67);
+					}
+				}
+			}
+		}
+
 		.control-languages a[aria-expanded="true"],
 		.control-search a[aria-expanded="true"] {
 			background:$gray-darker;
 
+			& > i.fa.fa-search {
+				display: none;
+			}
+
+			& > i.fa.fa-close {
+				display: inherit;
+			}
+		}
+
+		.control-search a {
+
+			& > i {
+				min-width: 16px;
+			}
+			
+			& > i.fa.fa-search {
+				display: inherit;
+			}
+
+			& > i.fa.fa-close {
+				display: none;
+			}
 		}
 
 		.control-basket{
@@ -84,6 +129,10 @@
 
 				.badge{
 					margin-left: .5rem;
+				}
+
+				.badge-right{
+					margin-right: .5rem; 
 				}
 
 				&:hover{

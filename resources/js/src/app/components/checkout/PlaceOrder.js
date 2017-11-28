@@ -16,7 +16,8 @@ var ResourceService = require("services/ResourceService");
             return {
                 waiting: false,
                 checkout: {},
-                checkoutValidation: {}
+                checkoutValidation: {},
+                contactWish: {}
             };
         },
 
@@ -26,9 +27,27 @@ var ResourceService = require("services/ResourceService");
 
             ResourceService.bind("checkout", this);
             ResourceService.bind("checkoutValidation", this);
+            ResourceService.bind("contactWish", this);
         },
 
         methods: {
+            placeOrder: function()
+            {
+                this.waiting = true;
+
+                if (this.contactWish.contactWishValue && this.contactWish.contactWishValue.length > 0)
+                {
+                    ApiService.post("/rest/io/order/contactWish", {orderContactWish: this.contactWish.contactWishValue}, {supressNotifications: true})
+                        .always(() =>
+                        {
+                            this.preparePayment();
+                        });
+                }
+                else
+                {
+                    this.preparePayment();
+                }
+            },
 
             preparePayment: function()
             {
@@ -104,9 +123,11 @@ var ResourceService = require("services/ResourceService");
 
                 case "errorCode":
                     NotificationService.error(paymentValue);
+                    this.waiting = false;
                     break;
                 default:
                     NotificationService.error("Unknown response from payment provider: " + paymentType);
+                    this.waiting = false;
                     break;
                 }
             },
@@ -126,6 +147,17 @@ var ResourceService = require("services/ResourceService");
                 }
 
                 $modal.modal("show");
+            }
+        },
+
+        watch:
+        {
+            "checkout.shippingCountryId": function(newVal, oldVal)
+            {
+                if (newVal !== oldVal)
+                {
+                    document.dispatchEvent(new CustomEvent("afterShippingCountryChanged", {detail: newVal}));
+                }
             }
         }
     });

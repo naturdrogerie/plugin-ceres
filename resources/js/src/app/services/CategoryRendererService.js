@@ -1,5 +1,6 @@
 const ItemListService = require("services/ItemListService");
 const ResourceService = require("services/ResourceService");
+const ApiService          = require("services/ApiService");
 let _categoryTree = {};
 let _categoryBreadcrumbs = [];
 
@@ -11,7 +12,6 @@ export function renderItems(currentCategory)
 {
     ResourceService.getResource("isLoadingBreadcrumbs").set(true);
 
-    $("#mainNavbarCollapsable").removeClass("open");
     $("body").removeClass("menu-is-visible");
 
     if ($.isEmptyObject(_categoryTree))
@@ -26,6 +26,12 @@ export function renderItems(currentCategory)
     else if (currentCategory.details.length)
     {
         _handleCurrentCategory(currentCategory);
+
+        document.dispatchEvent(new CustomEvent("afterCategoryChanged", {detail:
+        {
+            currentCategory: currentCategory,
+            categoryTree: _categoryTree
+        }}));
     }
 }
 
@@ -35,6 +41,7 @@ export function renderItems(currentCategory)
  */
 function _handleCurrentCategory(currentCategory)
 {
+    _removeTempDesc();
     _updateItemList(currentCategory);
     _updateHistory(currentCategory);
     _updateBreadcrumbs();
@@ -68,7 +75,57 @@ function _updateHistory(currentCategory)
 
     window.history.replaceState({}, title, getScopeUrl(currentCategory) + window.location.search);
 
-    document.getElementsByTagName("h1")[0].innerHTML = currentCategory.details[0].name;
+    _updateCategoryTexts(currentCategory);
+}
+
+function _removeTempDesc()
+{
+    const tempDesc = document.querySelector("#category-description-container");
+
+    if (tempDesc)
+    {
+        tempDesc.innerHTML = "";
+    }
+}
+
+function _updateCategoryTexts(currentCategory)
+{
+    document.querySelector(".category-title").innerHTML = currentCategory.details[0].name;
+    document.title = currentCategory.details[0].name + " | " + App.config.shopName;
+
+    _loadOptionalData(currentCategory);
+}
+
+function _loadOptionalData(currentCategory)
+{
+    const categoryImage = currentCategory.details[0].imagePath;
+    const parallaxImgContainer = document.querySelector(".parallax-img-container");
+
+    if (parallaxImgContainer)
+    {
+        if (categoryImage)
+        {
+            parallaxImgContainer.style.backgroundImage = "url(/documents/" + currentCategory.details[0].imagePath + ")";
+        }
+        else
+        {
+            parallaxImgContainer.style.removeProperty("background-image");
+        }
+    }
+
+    const categoryDescContainer = document.querySelector("#category-description-container");
+
+    if (categoryDescContainer)
+    {
+        ApiService.get("/rest/io/category/description/" + currentCategory.id)
+        .done(response =>
+        {
+            if (typeof response !== "object")
+            {
+                categoryDescContainer.innerHTML = response;
+            }
+        });
+    }
 }
 
 /**

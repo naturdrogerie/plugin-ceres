@@ -1,5 +1,7 @@
 {% macro get_nav_bar(categories, currentScopeUrl) %}
 
+    {% set counter = 0 %}
+
     {% for category in categories %}
 
         {% if category.details | length > 0 %}
@@ -10,7 +12,14 @@
 
                 <li class="ddown">
                     <a href="{{ currentScopeUrl }}" v-render-category="{{ category }}">{{ category.details[0].name }}</a>
-                    <ul data-level="1">
+
+                    <span class="hidden-lg-up nav-direction" data-toggle="collapse" href="#navDropdown{{ counter }}" aria-expanded="false">
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                    </span>
+
+                    <ul data-level="1" id="navDropdown{{ counter }}" class="collapse">
+
+                        {% set counter = counter + 1 %}
 
                         {% for child in category.children %}
                             {% if child.details | length > 0 %}
@@ -41,18 +50,21 @@
 
     {% set urlNow = currentScopeUrl %}
 
+
     {% for category in categories %}
 
         {% set urlNow = currentScopeUrl ~ "/" ~ category.details[0].nameUrl %}
 
-        <ul>
-            <li class="nav-item {% for breadcrumb in breadcrumbs %}{{ breadcrumb | json_encode() }}{% if category.id == breadcrumb.id %} active {% endif %}{% endfor %}" v-check-active category="{{ category }}">
-                <a href="{{ urlNow }}" class="nav-link" v-render-category="{{ category }}">{{ category.details[0].name }}</a>
-                {% if category.children is not empty %}
-                    {{ sidemenu.get_sidemenu(breadcrumbs, category.children, urlNow) }}
-                {% endif %}
-            </li>
-        </ul>
+        {% if category.details[0] %}
+            <ul>
+                <li class="nav-item{% for breadcrumb in breadcrumbs %}{% if category.id == breadcrumb.id %} active{% endif %}{% endfor %}" v-check-active category="{{ category }}">
+                    <a href="{{ urlNow }}" class="nav-link" v-render-category="{{ category }}">{{ category.details[0].name }}</a>
+                    {% if category.children is not empty %}
+                        {{ sidemenu.get_sidemenu(breadcrumbs, category.children, urlNow) }}
+                    {% endif %}
+                </li>
+            </ul>
+        {% endif %}
 
     {% endfor %}
 

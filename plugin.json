@@ -1,5 +1,5 @@
 {
-    "version"           : "1.2.10",
+    "version"           : "1.7.2",
     "name"              : "Ceres",
     "marketplaceName"   : {"de": "Ceres","en": "Ceres"},
     "description"       : "This is the official Ceres plugin developed by plentymarkets. Ceres is the default template plugin for plentymarkets 7 online stores.",
@@ -21,9 +21,19 @@
     "dataProviders"     :
     [
         {
-            "key":"Ceres\\Containers\\CeresLastSeenContainer",
-            "name":"Last seen items",
-            "description":"Display a list of last seen items in your online store"
+            "key":"Ceres\\Containers\\CeresItemListContainer1",
+            "name":"First item list",
+            "description":"Display a configurable list of items in your online store"
+        },
+        {
+            "key":"Ceres\\Containers\\CeresItemListContainer2",
+            "name":"Second item list",
+            "description":"Display a configurable list of items in your online store"
+        },
+        {
+            "key":"Ceres\\Containers\\CeresItemListContainer3",
+            "name":"Third item list",
+            "description":"Display a configurable list of items in your online store"
         }
     ],
     "containers"        :
@@ -42,6 +52,11 @@
             "key"           : "Script.Loader",
             "name"          : "Script loader: Register/load JS",
             "description"   : "Register scripts, events and other JS related items."
+        },
+        {
+            "key"           : "Script.AfterScriptsLoaded",
+            "name"          : "Script loader: After scripts loaded",
+            "description"   : "Load scripts, events and other JS related items, e.g. Vue components, after frameworks and scripts have been initialised."
         },
         {
             "key"           : "StaticPages.CancellationRights",
@@ -197,6 +212,11 @@
             "key"           : "SingleItem.ItemListContainer",
             "name"          : "Single item: Container for item lists",
             "description"   : "Add item lists in the single item view."
+        },
+        {
+            "key"           : "SingleItem.FeedbackContainer",
+            "name"          : "Single item: Container for customer feedback",
+            "description"   : "Add customer feedback in the single item view."
         },
         {
             "key"           : "BasketTotals.BeforeItemSum",
@@ -381,6 +401,12 @@
             "key"           : "OrderConfirmation.Override",
             "name"          : "Order confirmation: Override order confirmation",
             "description"   : "Override the complete order confirmation page.",
+            "multiple"      : false
+        },
+        {
+            "key"           : "OrderConfirmation.BeforeOrderDetails",
+            "name"          : "Order confirmation: Before order details",
+            "description"   : "Add content before the order details on the order confirmation page.",
             "multiple"      : false
         },
         {

@@ -66,7 +66,7 @@ Vue.component("account-settings", {
 
             if (this.newPassword !== "" && (this.newPassword === this.confirmPassword))
             {
-                APIService.post("/rest/io/customer/password", {password: this.newPassword})
+                APIService.post("/rest/io/customer/password", {password: this.newPassword, password2: this.confirmPassword})
                     .done(function(response)
                     {
                         self.clearFieldsAndClose();
@@ -95,15 +95,6 @@ Vue.component("account-settings", {
         {
             this.accountSettingsModal.hide();
             this.clearFields();
-        },
-
-        /**
-         * Get the current email address of the user
-         * @returns {*}
-         */
-        getEmail: function()
-        {
-            return this.userData.options[0].value;
         }
     }
 

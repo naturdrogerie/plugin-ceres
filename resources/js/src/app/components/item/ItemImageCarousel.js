@@ -54,7 +54,13 @@ Vue.component("item-image-carousel", {
         {
             var images = this.currentVariation.documents[0].data.images;
 
-            return images.variation.length || images.all.length;
+            if (images.variation && images.variation.length)
+            {
+                return images.variation.length;
+            }
+
+            return images.all.length;
+
         },
 
         reInitialize: function()
@@ -65,7 +71,14 @@ Vue.component("item-image-carousel", {
             $owl.html($owl.find(".owl-stage-outer").html()).removeClass("owl-loaded");
             $owl.find(".owl-item").remove();
 
+            var $thumbs = $(this.$els.thumbs);
+
+            $thumbs.trigger("destroy.owl.carousel");
+            $thumbs.html($thumbs.find(".owl-stage-outer").html()).removeClass("owl-loaded");
+            $thumbs.find(".owl-item").remove();
+
             this.initCarousel();
+            this.initThumbCarousel();
         },
 
         initCarousel: function()

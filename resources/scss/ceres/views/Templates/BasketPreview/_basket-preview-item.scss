@@ -85,7 +85,8 @@
 
 	.item-unit-price {
 	    width: 50%;
-	    float: left;
+		float: left;
+		white-space: nowrap;
 	}
 
 	.item-total-price {
@@ -98,9 +99,6 @@
 	
 
 	.item-remove{
-		position: absolute;
-	    bottom: 0;
-	    left:0;
 	    line-height: 1;
 	    cursor: pointer;					
 		color: $gray-lighter;
