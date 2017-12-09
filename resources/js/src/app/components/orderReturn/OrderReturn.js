@@ -29,7 +29,7 @@ Vue.component("order-return", {
     {
         showConfirmationModal()
         {
-            $(this.$els.orderReturnConfirmation).modal("show");
+            $(this.$refs.orderReturnConfirmation).modal("show");
         },
 
         sendReturnItems()
@@ -40,18 +40,18 @@ Vue.component("order-return", {
                 response =>
                 {
                     window.open("/return-confirmation", "_self");
-                    $(this.$els.orderReturnConfirmation).modal("hide");
+                    $(this.$refs.orderReturnConfirmation).modal("hide");
                 },
                 error =>
                 {
                     this.isLoading = false;
-                    $(this.$els.orderReturnConfirmation).modal("hide");
+                    $(this.$refs.orderReturnConfirmation).modal("hide");
                 });
         },
 
         selectAllItems()
         {
-            this.$broadcast("select-all-items");
+            vueEventHub.$emit("select-all-items");
         },
 
         ...Vuex.mapMutations([

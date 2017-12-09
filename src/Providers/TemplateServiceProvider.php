@@ -5,6 +5,7 @@ namespace Ceres\Providers;
 use Ceres\Caching\HomepageCacheSettings;
 use Ceres\Caching\NavigationCacheSettings;
 use Ceres\Caching\SideNavigationCacheSettings;
+use Ceres\Extensions\TwigStyleScriptTagFilter;
 use IO\Extensions\Functions\Partial;
 use IO\Helper\CategoryKey;
 use IO\Helper\CategoryMap;
@@ -29,9 +30,9 @@ class TemplateServiceProvider extends ServiceProvider
         'tpl.category.item'             => 'Category.Item.CategoryItem',          // provide template to use for item categories
         'tpl.category.blog'             => 'PageDesign.PageDesign',               // provide template to use for blog categories
         'tpl.category.container'        => 'PageDesign.PageDesign',               // provide template to use for container categories
-        'tpl.item'                      => 'Item.SingleItem',                     // provide template to use for single items
+        'tpl.item'                      => 'Item.SingleItemWrapper',                 // provide template to use for single items
         'tpl.basket'                    => 'Basket.Basket',                       // provide template to use for basket
-        'tpl.checkout'                  => 'Checkout.Checkout',                   // provide template to use for checkout
+        'tpl.checkout'                  => 'Checkout.CheckoutView',               // provide template to use for checkout
         'tpl.my-account'                => 'MyAccount.MyAccount',                 // provide template to use for my-account
         'tpl.confirmation'              => 'Checkout.OrderConfirmation',          // provide template to use for confirmation
         'tpl.login'                     => 'Customer.Login',                      // provide template to use for login
@@ -57,6 +58,7 @@ class TemplateServiceProvider extends ServiceProvider
     {
         // Register Twig String Loader to use function: template_from_string
         $twig->addExtension('Twig_Extension_StringLoader');
+        $twig->addExtension(TwigStyleScriptTagFilter::class);
 
         $eventDispatcher->listen('IO.tpl.*', function (TemplateContainer $templateContainer) {
                 $templateContainer->setTemplate('Ceres::' . self::$templateKeyToViewMap[$templateContainer->getTemplateKey()]);

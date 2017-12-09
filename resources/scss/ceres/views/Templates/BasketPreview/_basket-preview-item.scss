@@ -102,6 +102,13 @@
 	    line-height: 1;
 	    cursor: pointer;					
 		color: $gray-lighter;
+		text-decoration: none;
+		width: 114px;
+		text-align: left;
+
+		& .btn-label {
+			background: transparent;
+		}
 
 		&:hover {
 			color:$brand-danger;

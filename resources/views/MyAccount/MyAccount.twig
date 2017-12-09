@@ -19,11 +19,6 @@
     {% set contactHasReturns = services.customer.hasReturns() %}
 
     <div class="page-content myaccount container-max m-b-3 m-t-1">
-
-        <resource
-                name="checkout"
-                route="/rest/io/checkout/"
-                :data="{{ services.checkout.getCheckout() | json_encode() }}"></resource>
         <!-- HEADER -->
         <div class="row m-b-3">
             <div class="col-sm-9">
@@ -37,7 +32,7 @@
                 {% endif %}
             </div>
             <div class="col-sm-3">
-                <a href="#" class="btn btn-danger pull-xs-right" v-logout>
+                <a href="#" class="btn btn-danger pull-xs-right btn-medium" v-logout>
                     <i class="fa fa-sign-out"></i>
                     {{ trans("Ceres::Template.accLogout") }}
                 </a>
@@ -57,7 +52,7 @@
                 <p class="text-muted small font-italic">{{ trans("Ceres::Template.generalAll") }} {{ trans("Ceres::Template.accInvoiceAddresses") }}</p>
                 <div class="shipping-addresses-select">
                     <invoice-address-select :address-list="{{ services.customer.getAddresses(1) | json_encode() }}"
-                                            :selected-address-id="{{ services.checkout.getBillingAddressId() }}"
+                                            :selected-address-id="{{ services.checkout.getBillingAddressId() | json_encode }}"
                                             :country-name-map="{{ countryNameMap | json_encode()}}"></invoice-address-select>
                 </div>
             </div>
@@ -68,7 +63,7 @@
                 <p class="text-muted small font-italic">{{ trans("Ceres::Template.generalAll") }} {{ trans("Ceres::Template.accShippingAddresses") }}</p>
                 <div class="shipping-addresses-select">
                     <shipping-address-select :address-list="{{ services.customer.getAddresses(2) | json_encode() }}"
-                                             :selected-address-id="{{ services.checkout.getDeliveryAddressId() }}"
+                                             :selected-address-id="{{ services.checkout.getDeliveryAddressId() | json_encode }}"
                                              :country-name-map="{{ countryNameMap | json_encode()}}"></shipping-address-select>
                 </div>
             </div>
@@ -114,7 +109,7 @@
     <!-- HISTORY -->
     <history template="#vue-history" 
             :orders-per-page="{{ ordersPerPage }}" 
-            :order-list="{{ services.customer.getOrders(1, ordersPerPage) | json_encode() }}"
+            :order-list-data="{{ services.customer.getOrders(1, ordersPerPage) | json_encode() }}"
             :is-return-active="{{ isReturnActive | json_encode }}"
             :contact-has-returns="{{ contactHasReturns | json_encode }}">
     </history>

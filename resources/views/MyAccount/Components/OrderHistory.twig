@@ -129,10 +129,16 @@
 
                                     <div class="col-xs-12 col-md-4">
                                         <div class="payment-change-box">
-                                            <button class="btn btn-primary btn-block" @click="setCurrentOrder({{ entry }})">{{ trans("Ceres::Template.orderDetails") }}</button>
+                                            <button class="btn btn-primary btn-block" @click="setCurrentOrder({{ entry }})">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                                {{ trans("Ceres::Template.orderDetails") }}
+                                            </button>
 
                                             {% if entry.isReturnable %}
-                                                <a class="btn btn-primary btn-block" href="/returns/{{ entry.order.id }}">{{ trans("Ceres::Template.myAccountReturnSendBack") }}</a>
+                                                <a v-waiting-animation-infinite class="btn btn-primary btn-block" href="/returns/{{ entry.order.id }}">
+                                                    <i class="fa fa-undo" aria-hidden="true"></i>
+                                                    {{ trans("Ceres::Template.myAccountReturnSendBack") }}
+                                                </a>
                                             {% endif %}
 
                                             <change-payment-method  template="#vue-change-payment-method"
@@ -155,7 +161,7 @@
             </div>
 
             <!-- ORDER DETAILS MODAL -->
-            <div class="modal fade" v-el:order-details v-if="currentOrder" tabindex="-1" role="dialog">
+            <div class="modal fade" ref="orderDetails" v-if="currentOrder" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">

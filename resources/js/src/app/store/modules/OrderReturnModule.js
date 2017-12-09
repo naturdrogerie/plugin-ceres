@@ -63,11 +63,11 @@ const actions =
                     ApiService.post("/rest/io/order/return", {orderId: state.orderData.order.id, variationIds, returnNote: state.orderReturnNote})
                         .done(data =>
                         {
-                            resolve();
+                            resolve(data);
                         })
-                        .fail(() =>
+                        .fail(error =>
                         {
-                            reject();
+                            reject(error);
                         });
                 }
                 else

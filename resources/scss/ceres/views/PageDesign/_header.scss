@@ -10,6 +10,7 @@
 	a{
 		text-decoration: none;
 		color: $top-bar-color;
+		outline: none;
 	}
 	.controls-list{
 		margin-bottom: 0;
@@ -24,15 +25,36 @@
 			margin-right: 0;
 
 			// sets the height of the top-bar
-			a{
-				padding: 0.5rem .8rem;
-				display: inline-block;
-				color: $gray-lighter;
+			@include media-breakpoint-between(xs, md) {
 
-				&[aria-expanded="true"],
-				&:hover{
-					background-color: $brand-primary;
-					color: #FFF;
+				a {
+					padding: 0.5rem .5rem;
+					display: inline-block;
+					color: $gray-lighter;
+	
+					&[aria-expanded="true"] {
+						background-color: $brand-primary;
+						color: $white;
+					}
+				}
+
+				.anicon {
+					padding: 0.5rem .8rem;
+				}
+
+			}
+
+			@include media-breakpoint-up(md) {
+				a {
+					padding: 0.5rem .8rem;
+					display: inline-block;
+					color: $gray-lighter;
+
+					&[aria-expanded="true"],
+					&:hover{
+						background-color: $brand-primary;
+						color: $white;
+					}
 				}
 			}
 
@@ -52,19 +74,69 @@
 			//login | register
 			#login-change {
 				position:relative;
-				.dropdown-menu {
-					z-index: 2000;
-					a {
-						padding:1rem .8rem;
-						border:0;
-						border-top: 1px solid $gray-lighter;
-						display: block;
-						color: $brand-primary;
-						&:first-child {
-							border-top:0;
+
+				& > .dropdown {
+
+					& .dropdown-toggle {
+						transition: all .1s;
+	
+						&:after {
+							margin-left: 7px;
 						}
-						&:hover {
-							color: white;
+					}
+	
+					&.open {
+						& > .dropdown-toggle {
+							background-color: $gray-darker;
+						}
+	
+						& .dropdown-menu {
+							max-height: 200px;
+
+							@include media-breakpoint-between(xs, md) {
+								width: 105px;
+
+								&.dropdown-menu-right {
+									right: initial;
+								}
+							}
+						}
+					}
+	
+					.dropdown-menu {
+						z-index: 2000;
+						transition: all 0.3s;
+						max-height: 0;
+						display: block;
+						overflow: hidden;
+						border: none !important;
+
+						@include media-breakpoint-between(xs, md) {
+							width: 105px;
+
+							&.dropdown-menu-right {
+								right: initial;
+							}
+						}
+
+						a {
+							padding:1rem .8rem;
+							border:0;
+							border-top: 1px solid $gray-lighter;
+							display: block;
+							color: $white;
+							background-color: $gray-darker;
+							&:hover {
+								background-color: $brand-primary;
+							}
+	
+							& > .fa-user {
+								margin-right: 5px;
+							}
+	
+							& > .fa-sign-out {
+								margin-right: 3px;
+							}
 						}
 					}
 				}

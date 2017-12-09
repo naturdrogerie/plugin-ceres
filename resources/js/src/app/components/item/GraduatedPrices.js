@@ -1,96 +1,52 @@
-const ResourceService = require("services/ResourceService");
-
 Vue.component("graduated-prices", {
     props: [
         "template"
     ],
 
-    data()
+    computed:
     {
-        return {
-            currentVariation: null
-        };
+        graduatedPrices()
+        {
+            let prices = this.$store.state.item.variation.documents[0].data.calculatedPrices.graduatedPrices;
+
+            prices = prices.filter(price => price.minimumOrderQuantity > 1);
+
+            return [...prices].sort((priceA, priceB) =>
+            {
+                if (priceA.minimumOrderQuantity > priceB.minimumOrderQuantity)
+                {
+                    return 1;
+                }
+                if (priceA.minimumOrderQuantity < priceB.minimumOrderQuantity)
+                {
+                    return -1;
+                }
+
+                return 0;
+            });
+        },
+
+        activeGraduationIndex()
+        {
+            const prices = this.graduatedPrices.filter(price => this.variationOrderQuantity >= price.minimumOrderQuantity);
+
+            if (!prices.length)
+            {
+                return -1;
+            }
+
+            const price = prices.reduce((prev, current) => (prev.minimumOrderQuantity > current.minimumOrderQuantity) ? prev : current);
+
+            return this.graduatedPrices.indexOf(price);
+        },
+
+        ...Vuex.mapState({
+            variationOrderQuantity: state => state.item.variationOrderQuantity
+        })
     },
 
     created()
     {
         this.$options.template = this.template;
-    },
-
-    ready()
-    {
-        this.currentVariation = ResourceService.getResource("currentVariation").val();
-
-        this.initializeEvents();
-    },
-
-    methods:
-    {
-        initializeEvents()
-        {
-            this.initCurrentWatcher();
-            this.initQuantityPriceWatcher();
-        },
-
-        initCurrentWatcher()
-        {
-            ResourceService.watch("currentVariation", (newValue, oldValue) =>
-            {
-                this.currentVariation = newValue;
-            });
-        },
-
-        initQuantityPriceWatcher()
-        {
-            // TODO replace this after vuex change and single item component change
-
-            document.addEventListener("itemGraduatedPriceChanged", event =>
-            {
-                let graduatedPrices = this.currentVariation.documents[0].data.calculatedPrices.graduatedPrices;
-
-                graduatedPrices = graduatedPrices.sort((firstValue, secondValue) =>
-                {
-                    return firstValue.minimumOrderQuantity - secondValue.minimumOrderQuantity;
-                });
-
-                let priceToMark = 0;
-
-                for (const price of graduatedPrices)
-                {
-                    if (price.minimumOrderQuantity > 1)
-                    {
-                        // unmark other selections
-                        document.getElementById(price.minimumOrderQuantity + "_qty").style.opacity = 0;
-
-                        // get correct price to mark
-                        if (event.detail >= price.minimumOrderQuantity)
-                        {
-                            priceToMark = price.minimumOrderQuantity;
-                        }
-                    }
-                }
-
-                // mark new selection
-                if (priceToMark != 0)
-                {
-                    document.getElementById(priceToMark + "_qty").style.opacity = 1;
-                }
-            });
-        }
-    },
-
-    computed:
-    {
-        graduatedPrices()
-        {
-            if (this.currentVariation)
-            {
-                const prices = this.currentVariation.documents[0].data.calculatedPrices.graduatedPrices;
-
-                return prices.filter(price => price.minimumOrderQuantity > 1);
-            }
-
-            return [];
-        }
     }
 });
