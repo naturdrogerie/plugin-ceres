@@ -44,7 +44,14 @@
     {
         "tab"                         : "Global",
         "key"                         : "contact.opening_times",
-        "label"                       : "Opening hours",
+        "label"                       : "Opening hours (DE)",
+        "type"                        : "text",
+        "default"                     : "Montag - Freitag, 00:00 - 24:00"
+    },
+    {
+        "tab"                         : "Global",
+        "key"                         : "contact.en.opening_times",
+        "label"                       : "Opening hours (EN)",
         "type"                        : "text",
         "default"                     : "Monday - Friday, 00:00 - 24:00"
     },
@@ -436,7 +443,8 @@
         {
             "all"                       : "All",
             "main"                      : "Only main variations",
-            "child"                     : "Only child variations"
+            "child"                     : "Only child variations",
+            "combined"                  : "Dynamically"
         },
         "default"                       : "all"
     },
@@ -802,8 +810,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",
@@ -839,8 +845,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",
@@ -876,8 +880,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",
@@ -939,8 +941,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",
@@ -977,8 +977,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",
@@ -1015,8 +1013,6 @@
             "item.id_desc"                              : "Item ID ⬇",
             "texts.name_asc"                            : "Item name A-Z",
             "texts.name_desc"                           : "Item name Z-A",
-            "item.position_asc"                         : "Item position ⬆",
-            "item.position_desc"                        : "Item position ⬇",
             "sorting.price.min_asc"                     : "Price ⬆",
             "sorting.price.max_desc"                    : "Price ⬇",
             "variation.createdAt_desc"                  : "Newest variation",

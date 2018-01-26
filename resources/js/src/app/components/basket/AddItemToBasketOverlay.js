@@ -45,7 +45,7 @@ Vue.component("add-item-to-basket-overlay", {
             {
                 const img = this.$options.filters.itemImages(this.latestBasketEntry.item.images, "urlPreview")[0];
 
-                return img.url;
+                return img ? img.url : "";
             }
 
             return "";
@@ -77,7 +77,12 @@ Vue.component("add-item-to-basket-overlay", {
             {
                 setTimeout(function()
                 {
-                    $("body").toggleClass("open-right");
+                    const vueApp = document.querySelector("#vue-app");
+
+                    if (vueApp)
+                    {
+                        vueApp.classList.toggle("open-right");
+                    }
                 }, 1);
             }
         }

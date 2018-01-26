@@ -52,18 +52,6 @@ var init = (function($, window, document)
         var $toggleListView = $(".toggle-list-view");
         var $mainNavbarCollapse = $("#mainNavbarCollapse");
 
-        setTimeout(function()
-        {
-            var $toggleBasketPreview = $("#toggleBasketPreview, #closeBasketPreview");
-
-            $toggleBasketPreview.on("click", function(evt)
-            {
-                evt.preventDefault();
-                evt.stopPropagation();
-                $("#vue-app").toggleClass("open-right");
-            });
-        }, 1);
-
         $(document).on("click", function(evt)
         {
             if ($("#vue-app").hasClass("open-right"))
@@ -133,18 +121,28 @@ var init = (function($, window, document)
             var offset = 250;
             var duration = 300;
 
+            var isDesktop = window.matchMedia("(min-width: 768px)").matches;
+
             $(window).scroll(function()
             {
-                if ($(this).scrollTop() > offset)
+                if (isDesktop)
                 {
-                    $(".back-to-top").fadeIn(duration);
-                    $(".back-to-top-center").fadeIn(duration);
+                    if ($(this).scrollTop() > offset)
+                    {
+                        $(".back-to-top").fadeIn(duration);
+                        $(".back-to-top-center").fadeIn(duration);
+                    }
+                    else
+                    {
+                        $(".back-to-top").fadeOut(duration);
+                        $(".back-to-top-center").fadeOut(duration);
+                    }
                 }
-                else
-                {
-                    $(".back-to-top").fadeOut(duration);
-                    $(".back-to-top-center").fadeOut(duration);
-                }
+            });
+
+            window.addEventListener("resize", function()
+            {
+                isDesktop = window.matchMedia("(min-width: 768px)").matches;
             });
 
             $(".back-to-top").click(function(event)

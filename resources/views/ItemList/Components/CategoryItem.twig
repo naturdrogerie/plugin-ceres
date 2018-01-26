@@ -31,7 +31,8 @@
                                                     :item-url="itemData | itemURL"
                                                     :show-dots="{{ config("Ceres.item.category_show_dots") | json_encode() }}"
                                                     :show-nav="{{ config("Ceres.item.category_show_nav") | json_encode() }}"
-                                                    :enable-carousel="{{ enableCarousel }}">
+                                                    :enable-carousel="{{ enableCarousel }}"
+                                                    ref="categoryImageCarousel">
                         </category-image-carousel>
                     </div>
                 </div>
@@ -51,17 +52,15 @@
                 </a>
                 <div class="thumb-meta">
                     <div class="prices">
-                        <a :href="itemData | itemURL" v-if="recommendedRetailPrice > 0" class="price-view-port">
+                        <div v-if="recommendedRetailPrice > 0" class="price-view-port">
                             <del class="crossprice">
                                 ${ itemData.calculatedPrices.formatted.rrpUnitPrice }
                             </del>
-                        </a>
+                        </div>
 
-                        <a :href="itemData | itemURL">
-                            <div class="price">
-                                ${ itemData.calculatedPrices.formatted.defaultUnitPrice } *
-                            </div>
-                        </a>
+                        <div class="price">
+                            ${ itemData.calculatedPrices.formatted.defaultUnitPrice } *
+                        </div>
                     </div>
 
                     <div class="category-unit-price" v-if="!(itemData.unit.unitOfMeasurement === 'C62' && itemData.unit.content === 1)">
