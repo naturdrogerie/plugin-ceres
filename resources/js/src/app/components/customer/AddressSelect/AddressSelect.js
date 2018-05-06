@@ -1,8 +1,11 @@
+import {isNullOrUndefined, isNull}from "../../../helper/utils";
+
 const ApiService = require("services/ApiService");
 const ModalService = require("services/ModalService");
 const AddressFieldService = require("services/AddressFieldService");
 
 import ValidationService from "services/ValidationService";
+import TranslationService from "services/TranslationService";
 
 Vue.component("address-select", {
 
@@ -11,8 +14,7 @@ Vue.component("address-select", {
     props: [
         "template",
         "addressType",
-        "showError",
-        "countryNameMap"
+        "showError"
     ],
 
     data()
@@ -21,7 +23,11 @@ Vue.component("address-select", {
             addressModal   : {},
             modalType      : "",
             headline       : "",
-            addressToEdit  : {},
+            addressToEdit  : {
+                addressSalutation: 0,
+                gender: "male",
+                countryId        : this.shippingCountryId
+            },
             addressToDelete: {},
             deleteModal    : "",
             deleteModalWaiting: false,
@@ -68,7 +74,8 @@ Vue.component("address-select", {
         },
 
         ...Vuex.mapState({
-            isBasketLoading: state => state.basket.isBasketLoading
+            isBasketLoading: state => state.basket.isBasketLoading,
+            countryList: state => state.localization.shippingCountries
         })
     },
 
@@ -134,6 +141,7 @@ Vue.component("address-select", {
             {
                 this.addressToEdit = {
                     addressSalutation: 0,
+                    gender: "male",
                     countryId        : this.shippingCountryId
                 };
             }
@@ -157,6 +165,7 @@ Vue.component("address-select", {
             {
                 this.addressToEdit = {
                     addressSalutation: 0,
+                    gender: "male",
                     countryId        : this.shippingCountryId
                 };
             }
@@ -179,9 +188,18 @@ Vue.component("address-select", {
             this.modalType = "update";
             this.addressToEdit = this.getAddressToEdit(address);
 
-            if (typeof this.addressToEdit.addressSalutation === "undefined")
+            if (this.addressToEdit.gender === "female")
+            {
+                this.addressToEdit.addressSalutation = 1;
+            }
+            else if (isNull(this.addressToEdit.gender) && this.addressToEdit.name1)
+            {
+                this.addressToEdit.addressSalutation = 2;
+            }
+            else
             {
                 this.addressToEdit.addressSalutation = 0;
+                this.addressToEdit.gender = "male";
             }
 
             this.updateHeadline();
@@ -265,34 +283,34 @@ Vue.component("address-select", {
 
             if (this.modalType === "initial")
             {
-                headline = Translations.Template.orderInvoiceAddressInitial;
+                headline = TranslationService.translate("Ceres::Template.orderInvoiceAddressInitial");
             }
             else if (this.addressType === "2")
             {
                 if (this.modalType === "update")
                 {
-                    headline = Translations.Template.orderShippingAddressEdit;
+                    headline = TranslationService.translate("Ceres::Template.orderShippingAddressEdit");
                 }
                 else if (this.modalType === "create")
                 {
-                    headline = Translations.Template.orderShippingAddressCreate;
+                    headline = TranslationService.translate("Ceres::Template.orderShippingAddressCreate");
                 }
                 else
                 {
-                    headline = Translations.Template.orderShippingAddressDelete;
+                    headline = TranslationService.translate("Ceres::Template.orderShippingAddressDelete");
                 }
             }
             else if (this.modalType === "update")
             {
-                headline = Translations.Template.orderInvoiceAddressEdit;
+                headline = TranslationService.translate("Ceres::Template.orderInvoiceAddressEdit");
             }
             else if (this.modalType === "create")
             {
-                headline = Translations.Template.orderInvoiceAddressCreate;
+                headline = TranslationService.translate("Ceres::Template.orderInvoiceAddressCreate");
             }
             else
             {
-                headline = Translations.Template.orderInvoiceAddressDelete;
+                headline = TranslationService.translate("Ceres::Template.orderInvoiceAddressDelete");
             }
 
             this.headline = headline;
@@ -300,13 +318,18 @@ Vue.component("address-select", {
 
         /**
          * @param countryId
-         * @returns country name | empty string
+         * @returns string
          */
         getCountryName(countryId)
         {
             if (countryId > 0)
             {
-                return this.countryNameMap[countryId];
+                const country = this.countryList.find(country => country.id === countryId);
+
+                if (!isNullOrUndefined(country))
+                {
+                    return country.currLangName;
+                }
             }
 
             return "";
@@ -315,6 +338,7 @@ Vue.component("address-select", {
         setAddressToEditField({field, value})
         {
             this.addressToEdit[field] = value;
+            this.addressToEdit = Object.assign({}, this.addressToEdit);
         }
     },
 

@@ -3,7 +3,7 @@
 {% set showHeaderNavBar = config("Ceres.header.show_navbars") %}
 {% set companyName  = config("Ceres.header.company_name") %}
 
-<div class="wrapper wrapper-main {% if fixNavBarPos == 'true' %}isSticky{% endif %}">
+<div class="wrapper wrapper-main {% if ceresConfig.header.fixNavBarPos %}isSticky{% endif %}">
 
     <header class="top-bar">
         <div class="container-max">
@@ -49,16 +49,16 @@
         <div class="container-max m-b-3">
             <div class="row">
                 <div class="jumbotron col-md-8 offset-md-2 m-y-3">
-                    <h1 class="m-b-2">
+                    <span class="h1 m-b-2">
                         <span class="fa fa-warning text-danger"></span>
                         {{ trans("Ceres::Template.vueErrorTitle") }}
-                    </h1>
+                    </span>
                     <p class="lead">
                         {% autoescape false %}
                         {{ trans("Ceres::Template.vueErrorMessage") }}
                         {% endautoescape %}
                     </p>
-                    <a href="{{ trans("Ceres::Template.vueErrorLinkURL") }}" target="_blank" class="btn btn-primary btn-lg">{{ trans("Ceres::Template.vueErrorLink") }}</a>
+                    <a href="{{ trans("Ceres::Template.vueErrorLinkURL") }}" rel="noopener noreferrer" target="_blank" class="btn btn-primary btn-lg">{{ trans("Ceres::Template.vueErrorLink") }}</a>
                     <hr>
                 </div>
             </div>

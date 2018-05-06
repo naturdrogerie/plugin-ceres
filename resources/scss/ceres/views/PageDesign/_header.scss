@@ -1,5 +1,10 @@
 //header scss
 .top-bar{
+
+	@media print {
+		display: none;
+	}
+
 	position: fixed;
 	width: 100%;
 	
@@ -7,7 +12,7 @@
 	color: $top-bar-color;
 	background-color: $top-bar-bg;
 	box-shadow: 0 0 7px 0 rgba(0,0,0,.5);
-	a{
+	a:not(.btn) {
 		text-decoration: none;
 		color: $top-bar-color;
 		outline: none;
@@ -25,9 +30,9 @@
 			margin-right: 0;
 
 			// sets the height of the top-bar
-			@include media-breakpoint-between(xs, md) {
+			@include media-breakpoint-down(md) {
 
-				a {
+				a:not(.btn) {
 					padding: 0.5rem .5rem;
 					display: inline-block;
 					color: $gray-lighter;
@@ -45,7 +50,7 @@
 			}
 
 			@include media-breakpoint-up(md) {
-				a {
+				a:not(.btn) {
 					padding: 0.5rem .8rem;
 					display: inline-block;
 					color: $gray-lighter;
@@ -59,7 +64,7 @@
 			}
 
 			// icons should be slightly larger
-			.fa{
+			.fa:not(.qty-sign){
 				font-size: 1.2rem;
 			}
 
@@ -93,7 +98,7 @@
 						& .dropdown-menu {
 							max-height: 200px;
 
-							@include media-breakpoint-between(xs, md) {
+							@include media-breakpoint-down(md) {
 								width: 105px;
 
 								&.dropdown-menu-right {
@@ -111,7 +116,7 @@
 						overflow: hidden;
 						border: none !important;
 
-						@include media-breakpoint-between(xs, md) {
+						@include media-breakpoint-down(md) {
 							width: 105px;
 
 							&.dropdown-menu-right {
@@ -195,6 +200,8 @@
 		}
 
 		.control-basket{
+			position: relative;
+
 			.toggle-basket-preview{
 				background-color: $top-bar-basket-btn;
 				color: $top-bar-basket-color;
@@ -219,6 +226,10 @@
 .wrapper-main {
 	#page-body {
 		margin-top: 118px;
+
+		@media print {
+			margin-top: 0;
+		}
 	}
 	.navbar{
 		font-family:$font-family-heading;
@@ -362,7 +373,7 @@
 }
 
 // Mobile only
-@include media-breakpoint-between(xs, md) {
+@include media-breakpoint-down(md) {
 	.navbar {
 		.navbar-nav{
 
@@ -389,7 +400,7 @@
 				// default font size for all items
 				font-size: .8rem;
 
-				.fa{
+				.fa:not(.qty-sign){
 					// icons should be slightly larger
 					font-size: 1rem;
 					line-height: .8rem;

@@ -1,4 +1,5 @@
 import ExceptionMap from "exceptions/ExceptionMap";
+import TranslationService from "services/TranslationService";
 
 const NotificationService = require("services/NotificationService");
 
@@ -17,10 +18,9 @@ Vue.component("basket-list-item", {
     {
         return {
             waiting: false,
-            waitForDelete: false,
-            deleteConfirmed: false,
-            deleteConfirmedTimeout: null,
-            itemCondition: ""
+            waitingForDelete: false,
+            itemCondition: "",
+            showMoreInformation: false
         };
     },
 
@@ -28,14 +28,14 @@ Vue.component("basket-list-item", {
     {
         image()
         {
-            const img = this.$options.filters.itemImages(this.basketItem.variation.data.images, "urlPreview")[0];
+            const itemImages = this.$options.filters.itemImages(this.basketItem.variation.data.images, "urlPreview");
 
-            return img;
+            return this.$options.filters.itemImage(itemImages);
         },
 
         altText()
         {
-            const altText = this.image && this.image.alternate ? this.image.alternate : this.$options.filters.itemName(this.basketItem.variation.data.texts, App.config.itemName);
+            const altText = this.image && this.image.alternate ? this.image.alternate : this.$options.filters.itemName(this.basketItem.variation.data);
 
             return altText;
         },
@@ -43,6 +43,23 @@ Vue.component("basket-list-item", {
         isInputLocked()
         {
             return this.waiting || this.isBasketLoading;
+        },
+
+        propertySurchargeSum()
+        {
+            let sum = 0;
+
+            for (const property of this.basketItem.basketItemOrderParams)
+            {
+                sum += this.$options.filters.propertySurcharge(this.basketItem.variation.data.properties, property.propertyId);
+            }
+
+            return sum;
+        },
+
+        itemTotalPrice()
+        {
+            return this.basketItem.quantity * (this.basketItem.variation.data.prices.default.unitPrice.value + this.propertySurchargeSum);
         },
 
         ...Vuex.mapState({
@@ -62,33 +79,19 @@ Vue.component("basket-list-item", {
          */
         deleteItem()
         {
-            if (!this.deleteConfirmed)
+            if (!this.waiting && !this.waitingForDelete && !this.isBasketLoading)
             {
-                this.deleteConfirmed = true;
-                this.deleteConfirmedTimeout = window.setTimeout(
-                    () =>
-                    {
-                        this.resetDelete();
-                    },
-                    5000
-                );
-            }
-            else
-            {
-                this.waitForDelete = true;
-                this.waiting = true;
+                this.waitingForDelete = true;
 
                 this.$store.dispatch("removeBasketItem", this.basketItem.id).then(
                     response =>
                     {
                         document.dispatchEvent(new CustomEvent("afterBasketItemRemoved", {detail: this.basketItem}));
-                        this.waiting = false;
+                        this.waitingForDelete = false;
                     },
                     error =>
                     {
-                        this.resetDelete();
-                        this.waitForDelete = false;
-                        this.waiting = false;
+                        this.waitingForDelete = false;
                     });
             }
         },
@@ -117,11 +120,23 @@ Vue.component("basket-list-item", {
 
                         if (this.size === "small")
                         {
-                            this.$store.dispatch("addBasketNotification", {type: "error", message: Translations.Template[ExceptionMap.get(error.data.exceptionCode.toString())]});
+                            this.$store.dispatch(
+                                "addBasketNotification",
+                                {
+                                    type: "error",
+                                    message: TranslationService.translate(
+                                        "Ceres::Template." + ExceptionMap.get(error.data.exceptionCode.toString())
+                                    )
+                                }
+                            );
                         }
                         else
                         {
-                            NotificationService.error(Translations.Template[ExceptionMap.get(error.data.exceptionCode.toString())]).closeAfter(5000);
+                            NotificationService.error(
+                                TranslationService.translate(
+                                    "Ceres::Template." + ExceptionMap.get(error.data.exceptionCode.toString())
+                                )
+                            ).closeAfter(5000);
                         }
 
                         this.waiting = false;
@@ -129,16 +144,16 @@ Vue.component("basket-list-item", {
             }
         },
 
-        /**
-         * Cancel delete
-         */
-        resetDelete()
+        isPropertyVisible(propertyId)
         {
-            this.deleteConfirmed = false;
-            if (this.deleteConfirmedTimeout)
+            const property = this.basketItem.variation.data.properties.find(property => property.property.id === parseInt(propertyId));
+
+            if (property)
             {
-                window.clearTimeout(this.deleteConfirmedTimeout);
+                return property.property.isShownAtCheckout;
             }
+
+            return false;
         }
     }
 });

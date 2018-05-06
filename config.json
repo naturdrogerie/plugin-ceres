@@ -79,6 +79,13 @@
         "default"                     : "street, zip, city, hotline, email, opening_times"
     },
     {
+      "tab"     : "Global",
+      "key"     : "global.google_recaptcha_api_key",
+      "label"   : "Google reCAPTCHA website key",
+      "type"    : "text",
+      "default" : ""
+    },
+    {
         "tab"                         : "Global",
         "key"                         : "contact.api_key",
         "label"                       : "Google Maps API key",
@@ -98,6 +105,13 @@
         "label"                       : "Show map in mobile view",
         "type"                        : "checkbox",
         "default"                     : "false"
+    },
+    {
+        "tab"                         : "Global",
+        "key"                         : "contact.enable_confirming_privacy_policy",
+        "label"                       : "Enable to display checkbox for confirming privacy policy",
+        "type"                        : "checkbox",
+        "default"                     : "true"
     },
     {
         "tab"       : "Homepage",
@@ -223,6 +237,19 @@
         "label"     : "Fix the navigation bar at the top of the page",
         "type"      : "checkbox",
         "default"   : "true"
+    },
+    {
+        "tab"       : "Header",
+        "key"       : "header.show_category_types",
+        "label"     : "Type of categories rendered in the navigation",
+        "type"      : "dropdown",
+        "possibleValues":
+        {
+          "all"     : "All",
+          "item"    : "Item",
+          "content" : "Content"
+        },
+        "default"   : "all"
     },
     {
         "tab"       : "Header",
@@ -375,6 +402,33 @@
         "default"   : ""
     },
     {
+        "tab"       : "Footer",
+        "key"       : "footer.cancellation_use_pdf",
+        "label"     : "Use PDF cancellation form",
+        "type"      : "checkbox",
+        "default"   : false
+    },
+    {
+        "tab"       : "Footer",
+        "key"       : "footer.cancellation_pdf_path",
+        "label"     : "URL to PDF file",
+        "type"      : "text",
+        "default"   : "Insert path"
+    },
+    {
+        "tab"           : "Item view",
+        "key"           : "item.displayName",
+        "label"         : "Name of an item to display",
+        "type"          : "dropdown",
+        "possibleValues":
+        {
+            "itemName"             : "Item name",
+            "variationName"        : "Variation name",
+            "itemNameVariationName": "Item name and variation name"
+        },
+        "default"                  : "itemName"
+    },
+    {
         "tab"           : "Item view",
         "key"           : "item.name",
         "label"         : "Item name",
@@ -495,6 +549,13 @@
         "label"             : "Show category description in category view",
         "type"              : "checkbox",
         "default"           : "true"
+    },
+    {
+        "tab"               : "Item view",
+        "key"               : "item.require_all_properties",
+        "label"             : "Require all order properties before add to basket",
+        "type"              : "checkbox",
+        "default"           : "false"
     },
     {
         "tab"               : "Item lists",
@@ -693,6 +754,18 @@
             "no_information": "No information"
         },
         "default"           : "overlay"
+    },
+    {
+        "tab"               : "Shopping cart",
+        "key"               : "basket.preview_type",
+        "label"             : "The type of the cart preview",
+        "type"              : "dropdown",
+        "possibleValues"    :
+        {
+            "hover"         : "Hover",
+            "right"         : "Right"
+        },
+        "default"           : "right"
     },
     {
         "tab"               : "Pagination and sorting",
@@ -1037,6 +1110,13 @@
         "default"       : "notSelected"
     },
     {
+        "tab"               : "Pagination and sorting",
+        "key"               : "search.forwardToSingleItem",
+        "label"             : "Search: Forward to single item view",
+        "type"              : "checkbox",
+        "default"           : "false"
+    },
+    {
         "tab"               : "Checkout and My account",
         "key"               : "my_account.orders_per_page",
         "label"             : "Number of orders to show per page in order history",
@@ -1239,6 +1319,35 @@
       "default"                   : ""
     },
     {
+        "tab"   : "Languages",
+        "key"   : "language.active_languages",
+        "label" : "Active languages",
+        "type"  : "multi_select",
+        "possibleValues" :
+        {
+          "de" : "German",
+          "en" : "English",
+          "bg" : "Bulgarian",
+          "fr" : "French",
+          "it" : "Italian",
+          "es" : "Spanish",
+          "tr" : "Turkish",
+          "nl" : "Dutch",
+          "pl" : "Polish",
+          "pt" : "Portuguese",
+          "nn" : "Norwegian",
+          "ro" : "Romanian",
+          "da" : "Danish",
+          "se" : "Swedish",
+          "cz" : "Czech",
+          "ru" : "Russian",
+          "sk" : "Slovak",
+          "cn" : "Chinese",
+          "vn" : "Vietnamese"
+        },
+        "default"   : "de"
+    },
+    {
         "tab"   : "Currencies",
         "key"   : "currency.format",
         "label" : "Format of currencies",
@@ -1407,6 +1516,35 @@
     },
     {
         "tab"                         : "SEO",
+        "key"                         : "meta.robots_cancel_form",
+        "label"                       : "Robots for cancellation form",
+        "type"                        : "dropdown",
+        "possibleValues"              :
+        {
+          "all"                       : "all",
+          "index"                     : "index",
+          "nofollow"                  : "nofollow",
+          "noindex"                   : "noindex",
+          "noindex, nofollow"          : "noindex, nofollow"
+        },
+        "default"                     : "all"
+    },
+    {
+        "tab"       : "SEO",
+        "key"       : "meta.de.description_cancel_form",
+        "label"     : "Meta description for cancellation form (DE)",
+        "type"      : "textarea",
+        "default"   : ""
+    },
+    {
+        "tab"       : "SEO",
+        "key"       : "meta.en.description_cancel_form",
+        "label"     : "Meta description for cancellation form (EN)",
+        "type"      : "textarea",
+        "default"   : ""
+    },
+    {
+        "tab"                         : "SEO",
         "key"                         : "meta.robots_legal_disclosure",
         "label"                       : "Robots for legal disclosure",
         "type"                        : "dropdown",
@@ -1491,6 +1629,54 @@
         "label"     : "Meta description for terms and conditions (EN)",
         "type"      : "textarea",
         "default"   : ""
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-primary",
+        "label"             : "Primary colour",
+        "type"              : "text",
+        "default"           : "#008ebd",
+        "scss"              : true
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-secondary",
+        "label"             : "Secondary colour",
+        "type"              : "text",
+        "default"           : "#d4021d",
+        "scss"              : true
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-success",
+        "label"             : "Success colour",
+        "type"              : "text",
+        "default"           : "#7ED321",
+        "scss"              : true
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-info",
+        "label"             : "Information colour",
+        "type"              : "text",
+        "default"           : "#5bc0de",
+        "scss"              : true
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-warning",
+        "label"             : "Warning colour",
+        "type"              : "text",
+        "default"           : "#f0ad4e",
+        "scss"              : true
+    },
+    {
+        "tab"               : "Design",
+        "key"               : "brand-danger",
+        "label"             : "Danger colour",
+        "type"              : "text",
+        "default"           : "#d9534f",
+        "scss"              : true
     },
     {
         "tab"               : "Logging and performance",

@@ -1,10 +1,21 @@
+const browserDetect = require("detect-browser");
 // Frontend end scripts
 // eslint-disable-next-line
 var init = (function($, window, document)
 {
-
     function CeresMain()
     {
+        const browser = browserDetect.detect();
+
+        if (browser && browser.name)
+        {
+            $("html").addClass(browser.name);
+        }
+        else
+        {
+            $("html").addClass("unkown-os");
+        }
+
         $(window).scroll(function()
         {
             if ($(".wrapper-main").hasClass("isSticky"))
@@ -54,14 +65,17 @@ var init = (function($, window, document)
 
         $(document).on("click", function(evt)
         {
-            if ($("#vue-app").hasClass("open-right"))
+            const basketOpenClass = (App.config.basket.previewType === "right") ? "open-right" : "open-hover";
+
+            if ($("#vue-app").hasClass(basketOpenClass))
             {
                 if ((evt.target != $(".basket-preview")) &&
+                    (evt.target != document.querySelector(".basket-preview-hover")) &&
                     (evt.target.classList[0] != "message") &&
-                    ($(evt.target).parents(".basket-preview").length <= 0))
+                    ($(evt.target).parents(".basket-preview").length <= 0 && $(evt.target).parents(".basket-preview-hover").length <= 0))
                 {
                     evt.preventDefault();
-                    $("#vue-app").toggleClass("open-right");
+                    $("#vue-app").toggleClass(basketOpenClass || "open-hover");
                 }
             }
 
@@ -163,20 +177,11 @@ var init = (function($, window, document)
                 return false;
             });
 
-            $("#searchBox").on("show.bs.collapse", function()
-            {
-                $("#countrySettings").collapse("hide");
-            });
-
-            $("#countrySettings").on("show.bs.collapse", function()
-            {
-                $("#searchBox").collapse("hide");
-            });
-
             $("#accountMenuList").click(function()
             {
                 $("#countrySettings").collapse("hide");
                 $("#searchBox").collapse("hide");
+                $("#currencySelect").collapse("hide");
             });
         });
     }

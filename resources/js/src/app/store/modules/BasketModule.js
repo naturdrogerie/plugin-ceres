@@ -1,4 +1,6 @@
 import ApiService from "services/ApiService";
+import TranslationService from "services/TranslationService";
+const NotificationService = require("services/NotificationService");
 
 const state =
     {
@@ -9,6 +11,7 @@ const state =
             quantity: null
         },
         isBasketLoading: false,
+        isBasketInitiallyLoaded: false,
         basketNotifications: []
     };
 
@@ -79,11 +82,53 @@ const mutations =
         setIsBasketLoading(state, isBasketLoading)
         {
             state.isBasketLoading = !!isBasketLoading;
+        },
+
+        setIsBasketInitiallyLoaded(state)
+        {
+            state.isBasketInitiallyLoaded = true;
         }
     };
 
 const actions =
     {
+        loadBasketData({commit, state})
+        {
+            if (state.data.itemQuantity)
+            {
+                ApiService.get("/rest/io/basket/items", {template: "Ceres::Basket.Basket"})
+                    .done(basketItems =>
+                    {
+                        commit("setBasketItems", basketItems);
+                        commit("setIsBasketInitiallyLoaded");
+
+                        setTimeout(() =>
+                        {
+                            $(document.body).trigger("sticky_kit:recalc");
+                        }, 0);
+                    })
+                    .fail(error =>
+                    {
+                        if (error.data)
+                        {
+                            NotificationService.error(
+                                TranslationService.translate("Ceres::Template.notFoundOops")
+                            ).closeAfter(10000);
+                        }
+                    });
+            }
+            else
+            {
+                commit("setIsBasketInitiallyLoaded");
+            }
+
+            ApiService.listen("AfterBasketChanged", data =>
+            {
+                commit("setBasket", data.basket);
+                commit("setBasketItems", data.basketItems);
+            });
+        },
+
         addBasketNotification({commit}, {type, message})
         {
             commit("addBasketNotification", {type, message});
@@ -151,6 +196,11 @@ const actions =
                         commit("setBasketItems", basketItems);
                         commit("setIsBasketLoading", false);
                         resolve(basketItems);
+
+                        if (window.location.pathname === "/checkout" && !basketItems.length)
+                        {
+                            window.location.pathname = "/basket";
+                        }
                     })
                     .fail(error =>
                     {

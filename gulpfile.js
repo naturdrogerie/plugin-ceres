@@ -2,15 +2,11 @@ require("babel-polyfill");
 
 const JS_SRC = "./resources/js/src/";
 const JS_DIST = "./resources/js/dist/";
-const JS_LANG = "./resources/js/lang/";
 const SCSS_SRC = "./resources/scss/";
 const SCSS_DIST = "./resources/css/";
 const OUTPUT_PREFIX = "ceres";
 
 // import gulp
-var fs = require("fs");
-var Q = require("q");
-var path = require("path");
 var gulp = require("gulp");
 var gutil = require("gulp-util");
 var sourcemaps = require("gulp-sourcemaps");
@@ -22,13 +18,14 @@ var babelify = require("babelify");
 var glob = require("glob");
 var source = require("vinyl-source-stream");
 var buffer = require("vinyl-buffer");
-var addSrc = require("gulp-add-src");
 var minifyCSS = require("gulp-minify-css");
 var eslint = require("gulp-eslint");
-var props = require("gulp-props");
-var tap = require("gulp-tap");
 var sass = require("gulp-sass");
 var autoprefixer = require("gulp-autoprefixer");
+var copy = require("gulp-copy");
+var insert = require("gulp-insert");
+var fs = require("fs");
+var path = require("path");
 
 gulp.task("default", ["build"]);
 
@@ -42,11 +39,9 @@ gulp.task("build:bundle", [
     "build:productive-app",
     "build:vendor",
     "build:productive-vendor",
-    "build:lang"
 ], function()
 {
     return gulp.src([
-        JS_LANG + "*.js",
         JS_DIST + OUTPUT_PREFIX + "-vendor.productive.js",
         JS_SRC + "app.config.js",
         JS_DIST + OUTPUT_PREFIX + "-app.js"
@@ -64,7 +59,7 @@ gulp.task("build:bundle", [
 gulp.task("build:app", function()
 {
     var builder = browserify({
-        entries  : glob.sync("app/!(services)/**/*.js", {cwd: JS_SRC}),
+        entries  : ["app/main.js"].concat( glob.sync("app/!(services)/**/*.js", {cwd: JS_SRC}) ),
         debug    : true,
         basedir  : JS_SRC,
         paths    : ["app/"],
@@ -80,7 +75,7 @@ gulp.task("build:app", function()
         .pipe(source(OUTPUT_PREFIX + "-app.js"))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(addSrc.append(JS_SRC + "app/main.js"))
+        //.pipe(addSrc.append(JS_SRC + "app/main.js"))
         .pipe(concat(OUTPUT_PREFIX + "-app.js"))
         .pipe(sourcemaps.write(".", {
             includeContent: false,
@@ -93,7 +88,7 @@ gulp.task("build:app", function()
 gulp.task("build:productive-app", ["build:lint"], function()
 {
     var builder = browserify({
-        entries  : glob.sync("app/!(services)/**/*.js", {cwd: JS_SRC}),
+        entries  : ["app/main.js"].concat( glob.sync("app/!(services)/**/*.js", {cwd: JS_SRC}) ),
         debug    : true,
         basedir  : JS_SRC,
         paths    : ["app/"],
@@ -104,7 +99,7 @@ gulp.task("build:productive-app", ["build:lint"], function()
         .pipe(source(OUTPUT_PREFIX + "-app.js"))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(addSrc.append(JS_SRC + "app/main.js"))
+        //.pipe(addSrc.append(JS_SRC + "app/main.js"))
         .pipe(concat(OUTPUT_PREFIX + "-app.js"))
         .pipe(sourcemaps.write(".", {
             includeContent: false,
@@ -158,69 +153,27 @@ gulp.task("build:lint", function()
         .pipe(eslint.failAfterError());
 });
 
-// Lang
-gulp.task("build:lang", function()
-{
-    var defered = Q.defer();
-    var translations = {};
-
-    try
-    {
-        fs.accessSync("./resources/js/lang");
-    }
-    catch (e)
-    {
-        fs.mkdir("./resources/js/lang");
-    }
-    glob.sync("./resources/lang/*").forEach(function(filePath)
-    {
-        if (fs.statSync(filePath).isDirectory())
-        {
-            var lang = path.basename(filePath);
-
-            translations[lang] = {};
-            gulp.src(filePath + "/*.properties")
-                .pipe(props({namespace: ""}))
-                .pipe(
-                    tap(function(file, t)
-                    {
-                        var group = path.basename(file.path, ".json");
-
-                        translations[lang][group] = JSON.parse(String(file.contents));
-                    }).on("end", function()
-                    {
-                        defered.resolve();
-                        var text = "var Languages = Languages || {}; Languages['" + lang + "'] = {";
-
-                        for (var group in translations[lang])
-                        {
-                            text += group + ": {";
-                            for (var entry in translations[lang][group])
-                            {
-                                text += entry + ": " + translations[lang][group][entry] + ",";
-                            }
-                            text += "},";
-                        }
-                        text += "};";
-
-                        fs.writeFileSync("./resources/js/lang/" + lang + ".js", text);
-                    })
-                );
-        }
-    });
-
-    return defered.promise;
-});
-
 // SASS
 gulp.task("build:sass-min", ["build:sass"], function()
 {
     return buildSass(OUTPUT_PREFIX + ".min.css", "compressed");
 });
 
-gulp.task("build:sass", function()
+gulp.task("build:sass", ["copy:sass-vendor"], function()
 {
     return buildSass(OUTPUT_PREFIX + ".css", "expanded");
+});
+
+gulp.task("copy:sass-vendor", function()
+{
+    return gulp
+        .src([
+            'node_modules/bootstrap/scss/**/*.scss',
+            'node_modules/font-awesome/scss/**/*.scss',
+            'node_modules/flag-icon-css/sass/**/*.scss',
+            'node_modules/shariff/build/shariff.complete.css'
+        ])
+        .pipe(copy(SCSS_SRC, {prefix: 1}))
 });
 
 function buildSass(outputFile, outputStyle)
@@ -228,7 +181,8 @@ function buildSass(outputFile, outputStyle)
     var config = {
         scssOptions  : {
             errLogToConsole: true,
-            outputStyle    : outputStyle
+            outputStyle    : outputStyle,
+            data: ''
         },
         prefixOptions: {
             browsers: [
@@ -239,13 +193,23 @@ function buildSass(outputFile, outputStyle)
         }
     };
 
+    var pluginConfig = require('./config');
+    var scssConfig = pluginConfig
+        .filter(function(configEntry) {
+            return configEntry.scss === true;
+        })
+        .map(function(configEntry) {
+            return "$" + configEntry.key.split(".").join("") + ": " + configEntry.default + ";";
+        })
+        .join('');
+
     return gulp
         .src(SCSS_SRC + "Ceres.scss")
+        .pipe(insert.prepend(scssConfig))
         .pipe(sourcemaps.init())
         .pipe(sass(config.scssOptions).on("error", sass.logError))
         .pipe(rename(outputFile))
         .pipe(autoprefixer(config.prefixOptions))
-        .pipe(minifyCSS())
         .pipe(sourcemaps.write("."))
         .pipe(gulp.dest(SCSS_DIST));
 }

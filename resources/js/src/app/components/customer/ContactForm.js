@@ -2,6 +2,7 @@ const ApiService = require("services/ApiService");
 const NotificationService = require("services/NotificationService");
 
 import ValidationService from "services/ValidationService";
+import TranslationService from "services/TranslationService";
 
 Vue.component("contact-form", {
 
@@ -12,13 +13,16 @@ Vue.component("contact-form", {
     data()
     {
         return {
-            name    : "",
-            userMail: "",
-            subject : "",
-            message : "",
-            orderId : "",
-            cc      : false,
-            disabledSend: false
+            name                  : "",
+            userMail              : "",
+            subject               : "",
+            message               : "",
+            orderId               : "",
+            cc                    : false,
+            waiting               : false,
+            privacyPolicyAccepted : false,
+            privacyPolicyShowError: false,
+            enableConfirmingPrivacyPolicy: App.config.contact.enableConfirmingPrivacyPolicy
         };
     },
 
@@ -36,25 +40,44 @@ Vue.component("contact-form", {
             ValidationService.validate($("#contact-form"))
                 .done(() =>
                 {
-                    if (useCapture)
+                    if (!this.enableConfirmingPrivacyPolicy || this.privacyPolicyAccepted)
                     {
-                        grecaptcha.execute();
+                        if (useCapture)
+                        {
+                            grecaptcha.execute();
+                        }
+                        else
+                        {
+                            this.sendMail();
+                        }
                     }
                     else
                     {
-                        this.sendMail();
+                        this.privacyPolicyShowError = true;
+
+                        NotificationService.error(
+                            TranslationService.translate("Ceres::Template.generalCheckEntries")
+                        );
                     }
                 })
                 .fail(invalidFields =>
                 {
                     ValidationService.markInvalidFields(invalidFields, "error");
+
+                    if (this.enableConfirmingPrivacyPolicy && !this.privacyPolicyAccepted)
+                    {
+                        this.privacyPolicyShowError = true;
+                    }
+
+                    NotificationService.error(
+                        TranslationService.translate("Ceres::Template.generalCheckEntries")
+                    );
                 });
         },
 
         sendMail()
         {
-            this.disabledSend = true;
-            this.onSendIcon();
+            this.waiting = true;
 
             const mailObj =
                 {
@@ -69,15 +92,15 @@ Vue.component("contact-form", {
             ApiService.post("/rest/io/customer/contact/mail", {contactData: mailObj, template: "Ceres::Customer.Components.Contact.ContactMail"}, {supressNotifications: true})
                 .done(response =>
                 {
-                    this.disabledSend = false;
-                    this.onSendIcon();
+                    this.waiting = false;
                     this.clearFields();
-                    NotificationService.success(Translations.Template.contactSendSuccess);
+                    NotificationService.success(
+                        TranslationService.translate("Ceres::Template.contactSendSuccess")
+                    );
                 })
                 .fail(response =>
                 {
-                    this.disabledSend = false;
-                    this.onSendIcon();
+                    this.waiting = false;
 
                     if (response.validation_errors)
                     {
@@ -85,7 +108,9 @@ Vue.component("contact-form", {
                     }
                     else
                     {
-                        NotificationService.error(Translations.Template.contactSendFail);
+                        NotificationService.error(
+                            TranslationService.translate("Ceres::Template.contactSendFail")
+                        );
                     }
                 });
         },
@@ -98,20 +123,7 @@ Vue.component("contact-form", {
             this.message = "";
             this.orderId = "";
             this.cc = false;
-        },
-
-        onSendIcon()
-        {
-            const sendIcon = $(".send-btn i");
-
-            if (this.disabledSend)
-            {
-                sendIcon.removeClass("fa-paper-plane-o").addClass("fa-spinner fa-spin");
-            }
-            else
-            {
-                sendIcon.removeClass("fa-spinner fa-spin").addClass("fa-paper-plane-o");
-            }
+            this.privacyPolicyAccepted = false;
         },
 
         _handleValidationErrors(validationErrors)
@@ -126,6 +138,16 @@ Vue.component("contact-form", {
             }
 
             NotificationService.error(errorMessage);
+        },
+
+        privacyPolicyValueChanged(value)
+        {
+            this.privacyPolicyAccepted = value;
+
+            if (value)
+            {
+                this.privacyPolicyShowError = false;
+            }
         }
     }
 });

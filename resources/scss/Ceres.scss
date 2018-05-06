@@ -2,16 +2,17 @@
 // ==========================================================================
 // External Libs
 // ==========================================================================
-@import "../../node_modules/bootstrap/scss/bootstrap";
-@import "../../node_modules/font-awesome/scss/font-awesome";
-@import "../../node_modules/shariff/build/shariff.complete.css";
-@import "../../node_modules/flag-icon-css/sass/flag-icon";
+@import "bootstrap/scss/bootstrap";
+@import "font-awesome/scss/font-awesome";
+@import "shariff/build/shariff.complete.css";
+@import "flag-icon-css/sass/flag-icon";
 
 // ==========================================================================
 // Custom styles
 // ==========================================================================
 
 // global
+@import "ceres/mixins/breakpoints";
 @import "ceres/mixins/general-mixins";
 @import "ceres/mixins/proportional-boxes";
 @import "ceres/common/typography";
@@ -36,6 +37,7 @@
 @import "ceres/components/featured-category";
 @import "ceres/components/featured-sale-new";
 @import "ceres/components/anicon";
+@import "ceres/components/popper";
 
 // Forms
 @import "ceres/forms/input-groups";
@@ -54,7 +56,8 @@
 @import "ceres/views/Confirmation/confirmation-order-item";
 @import "ceres/views/Templates/AddressSelect/address-select";
 @import "ceres/views/Templates/BasketItemList/basket-item";
-@import "ceres/views/Templates/BasketPreview/basket-preview-item";
+@import "ceres/views/Templates/BasketItemList/basket-list-item";
+@import "ceres/views/Templates/BasketPreview/basket-preview-hover";
 @import "ceres/views/Templates/BasketPreview/basket-preview";
 @import "ceres/views/Templates/BasketTotalSum/basket-total-sum";
 @import "ceres/views/Templates/CategoryListItem/category-list-item";
@@ -63,6 +66,7 @@
 @import "ceres/views/Templates/Customer/login";
 @import "ceres/views/Templates/Customer/reset-password";
 @import "ceres/views/Templates/Hero/component-hero";
+@import "ceres/views/Templates/Item/quantity-input";
 @import "ceres/views/Templates/ItemListSort/pagination";
 @import "ceres/views/Templates/ItemRating/item-rating-roll";
 @import "ceres/views/Templates/ItemRating/item-rating-section";
